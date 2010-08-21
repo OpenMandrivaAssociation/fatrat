@@ -21,7 +21,7 @@ BuildRequires: libboost-devel
 
 Requires: libtorrent-rasterbar5
 Requires: qt4-common
-Requires: libssh2
+Requires: libssh2_1
 
 Suggests: fatrat-czshare
 Suggests: fatrat-opensubtitles
@@ -29,6 +29,15 @@ Suggests: fatrat-unpack
 
 %description
 FatRat is an open source download manager for Linux/Unix systems written in C++ with the help of the Trolltech Qt 4 library. It is rich in features and is continuously developed.
+
+%package devel
+Summary:        C development headers for enet
+Group:          Development/Libraries
+Requires:       %{name} = %{version}-%{release}
+
+%description devel
+This package contains header files required for development.
+
 
 %prep
 %setup -q
@@ -57,7 +66,6 @@ rm -rf %{buildroot}
 %{_bindir}/fatrat
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
-%{_includedir}/%{name}/*
 %{_datadir}/%{name}/lang/*.qm
 %{_datadir}/%{name}/data/css/*
 %{_datadir}/%{name}/data/btlinks.txt
@@ -66,3 +74,9 @@ rm -rf %{buildroot}
 %{_mandir}/man1/%{name}*
 %{_datadir}/%{name}/data/remote/*
 
+
+%files devel
+%defattr(-,root,root,-)
+%{_includedir}/%{name}/*
+
+%changelog
