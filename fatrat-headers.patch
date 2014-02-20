@@ -1,0 +1,15 @@
+Add missing header file which is needed to build some plugins.
+
+Author: Jan Vcelak <jvcelak@redhat.com>
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -597,6 +597,7 @@ set(fatrat_DEV_HEADERS_ENGINES
+ 	${CMAKE_CURRENT_SOURCE_DIR}/src/engines/CurlPoller.h
+ 	${CMAKE_CURRENT_SOURCE_DIR}/src/engines/CurlStat.h
+ 	${CMAKE_CURRENT_SOURCE_DIR}/src/engines/UrlClient.h
++	${CMAKE_CURRENT_SOURCE_DIR}/src/engines/StaticTransferMessage.h
+ 	)
+ 
+ install(FILES

@@ -1,82 +1,92 @@
-%define name fatrat
-%define version 1.1.2
-%define release %mkrel 2
+%define beta beta2
 
-Summary: Wownload manager for Linux with the help of the Trolltech Qt 4 library.
-Name: %{name}
-Version: %{version}
-Release: %{release}
-Source0: %{name}-%{version}.tar.gz
-License: GPLv2
-Group: Networking/File transfer
-Url:   http://fatrat.dolezel.info/
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-BuildRequires: libqt4-devel 
-BuildRequires: libssh2-devel 
-BuildRequires: libtorrent-rasterbar-devel
-BuildRequires: cmake 
-BuildRequires: libgloox-devel
-BuildRequires: libqtscript4
-BuildRequires: libboost-devel
-
-Requires: libtorrent-rasterbar5
-Requires: qt4-common
-Requires: libssh2_1
-
-Suggests: fatrat-czshare
-Suggests: fatrat-opensubtitles
-Suggests: fatrat-unpack
+Summary:	Download manager for Linux with the help of the Qt4 library
+Name:		fatrat
+Version:	1.2.0
+Release:	0.%{beta}.1
+License:	GPLv2+
+Group:		Networking/File transfer
+Url:		http://fatrat.dolezel.info/
+Source0:	http://www.dolezel.info/download/data/fatrat/%{name}-%{version}_%{beta}.tar.xz
+Patch0:		fatrat-headers.patch
+Patch10:	fatrat-remove-java-applet.patch
+BuildRequires:	cmake
+BuildRequires:	boost-devel
+BuildRequires:	gloox-devel
+BuildRequires:	qt4-devel
+BuildRequires:	pkgconfig(libcurl)
+BuildRequires:	pkgconfig(libssh2)
+BuildRequires:	pkgconfig(libtorrent-rasterbar)
+BuildRequires:	pkgconfig(pion-net)
+BuildRequires:	pkgconfig(QtWebKit)
+Requires:	qt4-common
+Suggests:	fatrat-czshare
+Suggests:	fatrat-opensubtitles
+Suggests:	fatrat-unpack
 
 %description
-FatRat is an open source download manager for Linux/Unix systems written in C++ with the help of the Trolltech Qt 4 library. It is rich in features and is continuously developed.
-
-%package devel
-Summary:        C development headers for enet
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-
-%description devel
-This package contains header files required for development.
-
-
-%prep
-%setup -q
-
-%build
-cmake . -DWITH_BITTORRENT=ON -DWITH_SFTP=ON -DWITH_CURL=ON -DWITH_ZIP=ON -DWITH_JABBER=ON -DWITH_NLS=ON  -DWITH_WEBINTERFACE=ON -DCMAKE_INSTALL_PREFIX=%{_prefix}
-
-%make
-
-%install
-rm -rf %{buildroot}
-%makeinstall_std
-
-%find_lang %{name}
-
-%clean
-rm -rf %{buildroot}
+FatRat is an open source download manager for Linux/Unix systems written
+in C++ with the help of the Trolltech Qt 4 library. It is rich in features
+and is continuously developed.
 
 %files -f %{name}.lang
-%defattr(-,root,root)
 %{_datadir}/%{name}/AUTHORS
 %{_datadir}/%{name}/INSTALL
 %{_datadir}/%{name}/LICENSE
 %{_datadir}/%{name}/README
 %{_datadir}/%{name}/TRANSLATIONS
 %{_bindir}/fatrat
+%{_bindir}/fatrat-conf
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
-%{_datadir}/%{name}/lang/*.qm
+%{_datadir}/%{name}/data/btsearch/
 %{_datadir}/%{name}/data/css/*
 %{_datadir}/%{name}/data/btlinks.txt
-%{_datadir}/%{name}/data/btsearch.xml
+%{_datadir}/%{name}/data/bttrackers.txt
 %{_datadir}/%{name}/data/defaults.conf
+%{_datadir}/%{name}/data/genssl.*
+%{_datadir}/%{name}/data/mirrors.txt
 %{_mandir}/man1/%{name}*
 %{_datadir}/%{name}/data/remote/*
 
+#----------------------------------------------------------------------------
+
+%package devel
+Summary:	Fatrat development files
+Group:		Development/C++
+
+%description devel
+This package contains header files required for development.
 
 %files devel
-%defattr(-,root,root,-)
 %{_includedir}/%{name}/*
 
-%changelog
+#----------------------------------------------------------------------------
+
+%prep
+%setup -q -n %{name}-%{version}_%{beta}
+%patch0 -p1
+
+# remove Java web-interface applet
+rm -rf data/remote/applet.html data/remote/applet/
+%patch10 -p1
+
+%build
+%cmake_qt4 \
+	-DCMAKE_EXE_LINKER_FLAGS="-lpthread -lssl -lcrypto -lboost_system -lboost_filesystem -lboost_thread -llog4cpp" \
+	-DWITH_BITTORRENT=ON \
+	-DWITH_CURL=ON \
+	-DWITH_JABBER=ON \
+	-DWITH_JPLUGINS=OFF \
+	-DWITH_NLS=ON \
+	-DWITH_WEBINTERFACE=ON
+
+%make
+
+%install
+cp build/config.h .
+%makeinstall_std -C build
+
+%find_lang %{name} --with-qt
+
+
