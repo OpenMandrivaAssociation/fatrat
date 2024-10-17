@@ -6,7 +6,7 @@ Version:	1.2.0
 Release:	0.%{beta}.1
 License:	GPLv2+
 Group:		Networking/File transfer
-Url:		http://fatrat.dolezel.info/
+Url:		https://fatrat.dolezel.info/
 Source0:	http://www.dolezel.info/download/data/fatrat/%{name}-%{version}_%{beta}.tar.xz
 Patch0:		fatrat-headers.patch
 Patch10:	fatrat-remove-java-applet.patch
